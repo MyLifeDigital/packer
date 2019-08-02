@@ -24,6 +24,7 @@ type StepRunSourceServer struct {
 	ConfigDrive           bool
 	InstanceMetadata      map[string]string
 	UseBlockStorageVolume bool
+	CaptureVolume         bool
 	ForceDelete           bool
 	server                *servers.Server
 }
@@ -80,7 +81,7 @@ func (s *StepRunSourceServer) Run(ctx context.Context, state multistep.StateBag)
 
 	// Create root volume in the Block Storage service if required.
 	// Add block device mapping v2 to the server create options if required.
-	if s.UseBlockStorageVolume {
+	if s.UseBlockStorageVolume && !s.CaptureVolume {
 		volume := state.Get("volume_id").(string)
 		blockDeviceMappingV2 := []bootfromvolume.BlockDevice{
 			{

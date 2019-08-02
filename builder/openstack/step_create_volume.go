@@ -11,6 +11,7 @@ import (
 
 type StepCreateVolume struct {
 	UseBlockStorageVolume  bool
+	CaptureVolume          bool
 	VolumeName             string
 	VolumeType             string
 	VolumeAvailabilityZone string
@@ -20,7 +21,7 @@ type StepCreateVolume struct {
 
 func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	// Proceed only if block storage volume is required.
-	if !s.UseBlockStorageVolume {
+	if !s.UseBlockStorageVolume && !s.CaptureVolume {
 		return multistep.ActionContinue
 	}
 
@@ -57,13 +58,25 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	ui.Say("Creating volume...")
-	volumeOpts := volumes.CreateOpts{
-		Size:             volumeSize,
-		VolumeType:       s.VolumeType,
-		AvailabilityZone: s.VolumeAvailabilityZone,
-		Name:             s.VolumeName,
-		ImageID:          sourceImage,
+
+	volumeOpts := volumes.CreateOpts{}
+	if s.CaptureVolume {
+		volumeOpts = volumes.CreateOpts{
+			Size:             volumeSize,
+			VolumeType:       s.VolumeType,
+			AvailabilityZone: s.VolumeAvailabilityZone,
+			Name:             s.VolumeName,
+		}
+	} else {
+		volumeOpts = volumes.CreateOpts{
+			Size:             volumeSize,
+			VolumeType:       s.VolumeType,
+			AvailabilityZone: s.VolumeAvailabilityZone,
+			Name:             s.VolumeName,
+			ImageID:          sourceImage,
+		}
 	}
+
 	volume, err := volumes.Create(blockStorageClient, volumeOpts).Extract()
 	if err != nil {
 		err := fmt.Errorf("Error creating volume: %s", err)

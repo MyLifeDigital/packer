@@ -101,6 +101,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		},
 		&StepCreateVolume{
 			UseBlockStorageVolume:  b.config.UseBlockStorageVolume,
+			CaptureVolume:          b.config.CaptureVolume,
 			VolumeName:             b.config.VolumeName,
 			VolumeType:             b.config.VolumeType,
 			VolumeAvailabilityZone: b.config.VolumeAvailabilityZone,
@@ -116,7 +117,11 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			ConfigDrive:           b.config.ConfigDrive,
 			InstanceMetadata:      b.config.InstanceMetadata,
 			UseBlockStorageVolume: b.config.UseBlockStorageVolume,
+			CaptureVolume:         b.config.CaptureVolume,
 			ForceDelete:           b.config.ForceDelete,
+		},
+		&StepAttachVolume{
+			CaptureVolume: b.config.CaptureVolume,
 		},
 		&StepGetPassword{
 			Debug: b.config.PackerDebug,
@@ -150,6 +155,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		},
 		&stepCreateImage{
 			UseBlockStorageVolume: b.config.UseBlockStorageVolume,
+			CaptureVolume:         b.config.CaptureVolume,
 		},
 		&stepUpdateImageTags{},
 		&stepUpdateImageVisibility{},

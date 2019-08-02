@@ -42,6 +42,7 @@ type RunConfig struct {
 	FloatingIPPool string `mapstructure:"floating_ip_pool"`
 
 	UseBlockStorageVolume  bool   `mapstructure:"use_blockstorage_volume"`
+	CaptureVolume          bool   `mapstructure:"capture_volume"`
 	VolumeName             string `mapstructure:"volume_name"`
 	VolumeType             string `mapstructure:"volume_type"`
 	VolumeSize             int    `mapstructure:"volume_size"`
